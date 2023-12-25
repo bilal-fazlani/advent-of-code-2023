@@ -53,9 +53,9 @@ object Day2Tests extends ZIOSpecDefault {
   ) + suite("Day 2 Tests")(
     test("part 1 : possible games") {
       Part1.execute.map(value => assertTrue(value == 8))
+    },
+    test("part 2 : lowest number of cubes") {
+      Part2.execute.map(value => assertTrue(value == 2286))
     }
-    // test("part 2 : lowest number of cubes") {
-    //   ???
-    // }
   )
 }

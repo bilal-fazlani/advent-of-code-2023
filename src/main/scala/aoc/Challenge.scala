@@ -22,6 +22,7 @@ private def read(inputFile: InputFile): ZStream[Any, IOException, String] =
   )
   .via(ZPipeline.utfDecode)
     .via(ZPipeline.splitLines)
+    .filter(_.nonEmpty)
 
 private def resourceFileExists(path: String) =
   ZIO
