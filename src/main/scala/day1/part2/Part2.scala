@@ -24,14 +24,14 @@ object Part2:
 
   def calculate(lines: ZStream[Any, Throwable, String]): Task[Int] =
     val part = numberMap.keys.mkString("|")
-    val reg = raw"[\d]|$part".r
+    val reg = raw"(?<=(\d|$part))".r
     lines.runFoldZIO(0) { (acc, line) =>
       val matches = reg.findAllMatchIn(line).toList
 
       if matches == Nil then ZIO.fail(Exception(s"Invalid line: $line"))
       else
-        val head = toNumber(matches.head.toString)
-        val tail = toNumber(matches.reverse.head.toString)
+        val head = toNumber(matches.head.group(1).toString)
+        val tail = toNumber(matches.reverse.head.group(1).toString)
         val concatinated = head.toString + tail.toString
         ZIO.succeed(acc + concatinated.toInt)
     }
