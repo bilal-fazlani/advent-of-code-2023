@@ -52,8 +52,7 @@ object Day2Tests extends ZIOSpecDefault {
     }
   ) + suite("Day 2 Tests")(
     test("cubes game") {
-      Day2.execute
-        .map(_ => assertCompletes)
+      Day2.execute.map(value => assertTrue(value == 8))
     }
   )
 }

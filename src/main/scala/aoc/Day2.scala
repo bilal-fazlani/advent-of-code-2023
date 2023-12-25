@@ -5,16 +5,30 @@ import zio.*
 import zio.stream.*
 import aoc.Challenge
 
-object Day2 extends Challenge[Seq[Game]](day(2)):
+object Day2 extends Challenge[Int](day(2)):
+
+  val maxRed = 12
+  val maxGreen = 13
+  val maxBlue = 14
 
   def parseLine(line: String) =
-    Game.parse(line)
+    Game.parse(line).left.map(e => Exception(e.toString))
 
-  def execute: Task[Seq[Game]] =
+  def execute: Task[Int] =
     file
       .map(parseLine)
       .absolve
-      .runCollect
+      .filter(game =>
+        game.reveals.forall(r =>
+          r.counts.forall {
+            case CubeCount(count, Color.Red)   => count <= maxRed
+            case CubeCount(count, Color.Green) => count <= maxGreen
+            case CubeCount(count, Color.Blue)  => count <= maxBlue
+          }
+        )
+      )
+      .map(_.id)
+      .runSum
       .mapError(e => Exception(e.toString))
 
 enum Color:
