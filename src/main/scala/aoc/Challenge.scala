@@ -23,11 +23,6 @@ private def read(inputFile: InputFile): ZStream[Any, IOException, String] =
   .via(ZPipeline.utfDecode)
     .via(ZPipeline.splitLines)
 
-// enum ResourceFileResult:
-//   case File
-//   case Directory
-//   case DoesNotExist
-
 private def resourceFileExists(path: String) =
   ZIO
     .attemptBlockingIO(

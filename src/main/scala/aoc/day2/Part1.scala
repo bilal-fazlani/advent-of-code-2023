@@ -5,7 +5,7 @@ import zio.*
 import zio.stream.*
 import aoc.Challenge
 
-object Day2 extends Challenge[Int](day(2)):
+object Part1 extends Challenge[Int](day(2).part(1)):
 
   val maxRed = 12
   val maxGreen = 13
