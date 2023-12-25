@@ -1,10 +1,10 @@
-package day1.part2
+package aoc
+package day1
 
 import zio.*
 import zio.stream.*
-import scala.util.matching.Regex.Match
 
-object Part2:
+object Part2 extends Challenge[Int](day(1).part(2)):
   val numberMap = Map(
     "one" -> 1,
     "two" -> 2,
@@ -22,10 +22,10 @@ object Part2:
       case Some(number) => number
       case None         => input.toInt
 
-  def calculate(lines: ZStream[Any, Throwable, String]): Task[Int] =
+  def execute: Task[Int] =
     val part = numberMap.keys.mkString("|")
     val reg = raw"(?<=(\d|$part))".r
-    lines.runFoldZIO(0) { (acc, line) =>
+    file.runFoldZIO(0) { (acc, line) =>
       val matches = reg.findAllMatchIn(line).toList
 
       if matches == Nil then ZIO.fail(Exception(s"Invalid line: $line"))
