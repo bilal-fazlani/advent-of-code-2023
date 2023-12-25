@@ -1,10 +1,10 @@
-package day1
+package day1.part2
 
 import zio.*
 import zio.stream.*
 import scala.util.matching.Regex.Match
 
-object Part1:
+object Part2:
   def calculate(lines: ZStream[Any, Throwable, String]): Task[Int] =
     val reg = raw"[\d]".r
     lines.runFoldZIO(0) { (acc, line) =>

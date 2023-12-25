@@ -1,4 +1,4 @@
-package day1
+package day1.part1
 
 import zio.*
 import zio.Console.*
