@@ -1,10 +1,13 @@
 package day1
 
 import zio.*
+import zio.Console.*
+import zio.stream.*
 
 object Main extends ZIOAppDefault:
-  val msg = "I was compiled by Scala 3. :)"
-
-  def run = 
-    Console.printLine("Hello world!") *> Console.printLine(msg)
-    
+  def run =
+    val input = ZStream
+      .fromFileName("day-1-trebuchet/src/main/input.txt")
+      .via(ZPipeline.utfDecode)
+      .via(ZPipeline.splitLines)
+    Part1.calculate(input).flatMap(printLine(_)).exitCode
