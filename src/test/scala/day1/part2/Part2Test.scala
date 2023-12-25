@@ -15,7 +15,7 @@ object Part2Test extends ZIOSpecDefault {
 
       val output = Part2.calculate(input)
 
-      output.map(obtained => assertTrue(obtained == 142))
-    } @@ TestAspect.timeout(10.seconds)
+      output.map(obtained => assertTrue(obtained == 281))
+    }
   )
 }

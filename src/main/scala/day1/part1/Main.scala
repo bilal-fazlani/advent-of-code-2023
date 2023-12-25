@@ -7,7 +7,7 @@ import zio.stream.*
 object Main extends ZIOAppDefault:
   def run =
     val input = ZStream
-      .fromFileName("day-1-trebuchet/src/main/input.txt")
+      .fromFileName("src/main//scala/day1/part1/input.txt")
       .via(ZPipeline.utfDecode)
       .via(ZPipeline.splitLines)
     Part1.calculate(input).flatMap(printLine(_)).exitCode
