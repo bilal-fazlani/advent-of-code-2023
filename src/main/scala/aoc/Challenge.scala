@@ -8,9 +8,8 @@ import java.io.IOException
 
 private def read(inputFile: InputFile): ZStream[Any, IOException, String] =
   (inputFile match
-    case InputFile.Day(value) =>
-      ZStream
-        .fromResource(s"day${value}.txt")
+    case InputFile.Day(day) =>
+      ZStream.fromResource(s"day${day}.txt")
 
     case InputFile.Part(day, part) =>
       val path = s"day${day.value}/part${part}.txt"
