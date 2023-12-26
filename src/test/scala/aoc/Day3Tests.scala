@@ -18,7 +18,7 @@ object Day3Tests extends ZIOSpecDefault {
     },
     test("read line") {
       assertTrue(
-        Day3.readLine("1..*a") == Chunk(
+        Part1.readLine("1..*a") == Chunk(
           Cell.Digit('1'),
           Cell.Empty,
           Cell.Empty,
@@ -26,6 +26,10 @@ object Day3Tests extends ZIOSpecDefault {
           Cell.SpecialChar
         )
       )
+    }
+  ) + suite("Day 3 Tests")(
+    test("sum of part numbers"){
+      Part1.execute.map(value => assertTrue(value == 4361))
     }
   )
 }
