@@ -2,7 +2,6 @@ package aoc
 package day1
 
 import zio.*
-import zio.stream.*
 
 object Part2 extends Challenge[Int](day(1).part(2)):
   val numberMap = Map(

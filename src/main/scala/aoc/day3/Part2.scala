@@ -4,88 +4,104 @@ package day3
 import zio.*
 
 object Part2 extends Challenge[Int](day(3)):
-  case class DigitScan(int: Char, isAdjacentToSymbol: Boolean)
+  case class Position(x: Int, y: Int) {
+    override def toString(): String = s"($x, $y)"
+  }
+
+  case class HorizontalRange(y: Int, x1: Int, x2: Int) {
+    override def toString(): String = s"($x1-$x2, $y)"
+  }
+
+  private def intersects(range: HorizontalRange, position: Position): Boolean =
+    range.y == position.y && position.x >= range.x1 && position.x <= range.x2
 
   def execute =
     for {
       allLines <- file.runCollect
       metrix = allLines.map(readLine)
-      length = metrix.length
-      width = metrix.head.length
-      scannedDigits =
-        metrix.zipWithIndex
-          .map(x => (x._1.zipWithIndex, x._2))
-          .map(x =>
-            x._1.map { y =>
-              scanDigit(metrix, x._2, y._2, width, length)
-            }
-          )
-      numbersScanned = findNumbers(scannedDigits)
-      sum = numbersScanned.collect { case Number(value, true) =>
-        value
+      given Chunk[Chunk[Cell]] = metrix
+      scannedStars = scanStars
+      scannedNumbers = scanNumbers
+      gearRatiosSum = scanGearRatios(scannedStars, scannedNumbers).collect { case (_, set) =>
+        set.foldLeft[Int](1)(_ * _.value)
       }.sum
-    } yield sum
+    } yield gearRatiosSum
 
   def readLine(line: String) = Chunk.from(line.map(Cell.parse))
 
-  def scanDigit(
-      metrix: Chunk[Chunk[Cell]],
-      x: Int,
-      y: Int,
-      width: Int,
-      height: Int
-  ): Option[DigitScan] =
-    val cell = metrix(x)(y)
-    cell.digit.map { int =>
-      val topLeft: Option[Cell] = if x <= 0 || y <= 0 then None else Some(metrix(x - 1)(y - 1))
-      val topCenter: Option[Cell] = if y <= 0 then None else Some(metrix(x)(y - 1))
-      val topRight: Option[Cell] = if y <= 0 || x >= (width - 1) then None else Some(metrix(x + 1)(y - 1))
+  case class Star(position: Position) {
+    override def toString(): String = s"* $position"
+  }
 
-      val left: Option[Cell] = if x <= 0 then None else Some(metrix(x - 1)(y))
-      val right: Option[Cell] = if x >= (width - 1) then None else Some(metrix(x + 1)(y))
+  case class PositionedCell(cell: Cell, position: Position) {
+    override def toString(): String = s"$cell $position"
+  }
 
-      val bottomLeft: Option[Cell] = if x <= 0 || y >= (height - 1) then None else Some(metrix(x - 1)(y + 1))
-      val bottomCenter: Option[Cell] = if y >= (height - 1) then None else Some(metrix(x)(y + 1))
-      val bottomRight: Option[Cell] = if x >= (width - 1) || y >= (height - 1) then None else Some(metrix(x + 1)(y + 1))
+  def scanGearRatios(stars: Chunk[Star], numbers: Chunk[Number])(using metrix: Chunk[Chunk[Cell]]) =
+    stars
+      .map { star =>
+        val neighbours = star.position.neighbours
+        star -> neighbours
+          .flatMap(nb => numbers.filter(num => intersects(num.range, nb.position)))
+          .toSet
+      }
+      .filter(_._2.size > 1)
+      .toMap
 
-      val isAdjacent = Seq(topLeft, topCenter, topRight, left, right, bottomLeft, bottomCenter, bottomRight).flatten
-        .exists(_.isSpecial)
-      if isAdjacent then DigitScan(int, true)
-      else DigitScan(int, false)
+  def scanStars(using metrix: Chunk[Chunk[Cell]]) =
+    metrix.zipWithIndex.flatMap { case (row, y) =>
+      row.zipWithIndex.collect { case (Cell.StarSymbol, x) =>
+        Star(Position(x, y))
+      }
     }
 
-  case class Number(value: Int, isPartNumber: Boolean)
-
-  enum State:
-    case Stopped(numbers: Chunk[Number])
-    case Working(numbers: Chunk[Number], pending: Chunk[DigitScan])
-
-  object State:
-    val empty = State.Stopped(Chunk.empty)
-
-  def findNumbers(scan: Chunk[Chunk[Option[DigitScan]]]): Chunk[Number] =
-    var currentGroup: Chunk[DigitScan] = Chunk.empty
-    var currentPart: Boolean = false
-
+  def scanNumbers(using metrix: Chunk[Chunk[Cell]]) =
+    val widht = metrix.head.length
+    var currentGroup: Chunk[PositionedCell] = Chunk.empty
     var done: Chunk[Number] = Chunk.empty
 
-    def isInProgress = currentGroup.nonEmpty
+    def reset(y: Int) = 
+      // if some number was in progress
+      if currentGroup.nonEmpty then
+        // move it to done
+        done = done.appended(
+          Number(
+            currentGroup.map(_.cell.digit.get).mkString.toInt,
+            HorizontalRange(y, currentGroup.head.position.x, currentGroup.last.position.x)
+          )
+        )
+        // reset current number
+        currentGroup = Chunk.empty
 
-    scan.foreach(row =>
-      row.foreach {
-        case Some(digit) =>
-          currentGroup = currentGroup.appended(digit)
-          if digit.isAdjacentToSymbol then currentPart = true
-        case None =>
-          // if some number is in progress
-          if currentGroup.nonEmpty then
-            // move it to done
-            done = done.appended(Number(currentGroup.map(_.int).mkString.toInt, currentPart))
-            // reset current number
-            currentGroup = Chunk.empty
-
-          // always part to false when encountering a wall
-          currentPart = false
+    metrix.zipWithIndex.foreach((row, y) =>
+      row.zipWithIndex.foreach {
+        case (d @ Cell.Digit(digit), x) if x == widht - 1 =>
+          reset(y)
+        case (d @ Cell.Digit(digit), x) =>
+          currentGroup = currentGroup.appended(PositionedCell(d, Position(x, y)))
+        case (_, _) => reset(y)
       }
     )
     done
+
+  extension (position: Position) {
+    def neighbours(using metrix: Chunk[Chunk[Cell]]) =
+      Chunk(
+        (position.x - 1, position.y - 1),
+        (position.x, position.y - 1),
+        (position.x + 1, position.y - 1),
+        (position.x - 1, position.y),
+        (position.x + 1, position.y),
+        (position.x - 1, position.y + 1),
+        (position.x, position.y + 1),
+        (position.x + 1, position.y + 1)
+      ).filter { case (x, y) =>
+        x >= 0 && y >= 0 && x < metrix.head.length && y < metrix.length
+      }.map { case (x, y) =>
+        PositionedCell(metrix(x)(y), Position(x, y))
+      }
+  }
+
+  case class Number(value: Int, range: HorizontalRange) {
+    override def toString(): String = s"[$value] at $range"
+  }

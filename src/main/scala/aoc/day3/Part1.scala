@@ -56,13 +56,6 @@ object Part1 extends Challenge[Int](day(3)):
 
   case class Number(value: Int, isPartNumber: Boolean)
 
-  enum State:
-    case Stopped(numbers: Chunk[Number])
-    case Working(numbers: Chunk[Number], pending: Chunk[DigitScan])
-
-  object State:
-    val empty = State.Stopped(Chunk.empty)
-
   def findNumbers(scan: Chunk[Chunk[Option[DigitScan]]]): Chunk[Number] =
     var currentGroup: Chunk[DigitScan] = Chunk.empty
     var currentPart: Boolean = false

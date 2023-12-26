@@ -2,8 +2,6 @@ package aoc
 package day1
 
 import zio.*
-import zio.stream.*
-import aoc.Challenge
 
 object Part1 extends Challenge[Int](day(1).part(1)):
   def execute: Task[Int] =

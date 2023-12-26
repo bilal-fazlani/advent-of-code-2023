@@ -11,6 +11,13 @@ enum Cell:
   case SpecialChar
   case Digit(int: Char)
 
+  override def toString(): String =
+    this match
+      case Empty       => "."
+      case StarSymbol  => "*"
+      case SpecialChar => "%"
+      case Digit(int)  => int.toString
+
   def isSpecial = this match
     case SpecialChar => true
     case _           => false

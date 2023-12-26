@@ -35,7 +35,7 @@ object Day3Tests extends ZIOSpecDefault {
       Part1.execute.map(value => assertTrue(value == 4361))
     },
     test("sum of gear ratios") {
-      Part2.execute.map(value => assertCompletes)
+      Part2.execute.map(value => assertTrue(value == 467835))
     }
   )
 }
