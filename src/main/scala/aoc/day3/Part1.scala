@@ -28,6 +28,19 @@ object Part1 extends Challenge[Int](day(3)):
 
   def readLine(line: String) = Chunk.from(line.map(Cell.parse))
 
+  private def neighbours(x: Int, y: Int, metrix: Chunk[Chunk[Cell]]) =
+    val product = Chunk
+      .from(
+        for {
+          xs <- (x - 1) to (x + 1)
+          ys <- (y - 1) to (y + 1)
+          if !(xs == x && ys == y)
+        } yield (xs, ys)
+      )
+      .filter((x1, y1) => x1 >= 0 && y1 >= 0 && x1 < metrix.head.length && y1 < metrix.length)
+      .map((x, y) => metrix(x)(y))
+    product
+
   def scanDigit(
       metrix: Chunk[Chunk[Cell]],
       x: Int,
@@ -37,19 +50,8 @@ object Part1 extends Challenge[Int](day(3)):
   ): Option[DigitScan] =
     val cell = metrix(x)(y)
     cell.digit.map { int =>
-      val topLeft: Option[Cell] = if x <= 0 || y <= 0 then None else Some(metrix(x - 1)(y - 1))
-      val topCenter: Option[Cell] = if y <= 0 then None else Some(metrix(x)(y - 1))
-      val topRight: Option[Cell] = if y <= 0 || x >= (width - 1) then None else Some(metrix(x + 1)(y - 1))
-
-      val left: Option[Cell] = if x <= 0 then None else Some(metrix(x - 1)(y))
-      val right: Option[Cell] = if x >= (width - 1) then None else Some(metrix(x + 1)(y))
-
-      val bottomLeft: Option[Cell] = if x <= 0 || y >= (height - 1) then None else Some(metrix(x - 1)(y + 1))
-      val bottomCenter: Option[Cell] = if y >= (height - 1) then None else Some(metrix(x)(y + 1))
-      val bottomRight: Option[Cell] = if x >= (width - 1) || y >= (height - 1) then None else Some(metrix(x + 1)(y + 1))
-
-      val isAdjacent = Seq(topLeft, topCenter, topRight, left, right, bottomLeft, bottomCenter, bottomRight).flatten
-        .exists(x => x.isSpecial || x.isStar)
+      val ns = neighbours(x, y, metrix)
+      val isAdjacent = ns.exists(x => x.isSpecial || x.isStar)
       if isAdjacent then DigitScan(int, true)
       else DigitScan(int, false)
     }

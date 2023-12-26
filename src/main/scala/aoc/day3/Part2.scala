@@ -60,7 +60,7 @@ object Part2 extends Challenge[Int](day(3)):
     var currentGroup: Chunk[PositionedCell] = Chunk.empty
     var done: Chunk[Number] = Chunk.empty
 
-    def reset(y: Int) = 
+    def reset(y: Int) =
       // if some number was in progress
       if currentGroup.nonEmpty then
         // move it to done
@@ -86,20 +86,16 @@ object Part2 extends Challenge[Int](day(3)):
 
   extension (position: Position) {
     def neighbours(using metrix: Chunk[Chunk[Cell]]) =
-      Chunk(
-        (position.x - 1, position.y - 1),
-        (position.x, position.y - 1),
-        (position.x + 1, position.y - 1),
-        (position.x - 1, position.y),
-        (position.x + 1, position.y),
-        (position.x - 1, position.y + 1),
-        (position.x, position.y + 1),
-        (position.x + 1, position.y + 1)
-      ).filter { case (x, y) =>
-        x >= 0 && y >= 0 && x < metrix.head.length && y < metrix.length
-      }.map { case (x, y) =>
-        PositionedCell(metrix(x)(y), Position(x, y))
-      }
+      Chunk
+        .from(for {
+          x <- (position.x - 1) to (position.x + 1)
+          y <- (position.y - 1) to (position.y + 1)
+          if !(x == position.x && y == position.y)
+          if x >= 0 && y >= 0 && x < metrix.head.length && y < metrix.length
+        } yield (x, y))
+        .map { case (x, y) =>
+          PositionedCell(metrix(x)(y), Position(x, y))
+        }
   }
 
   case class Number(value: Int, range: HorizontalRange) {
