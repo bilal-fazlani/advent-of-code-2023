@@ -3,7 +3,7 @@ package day3
 
 import zio.*
 
-object Part1 extends Challenge[Int](day(3)):
+object Part2 extends Challenge[Int](day(3)):
   case class DigitScan(int: Char, isAdjacentToSymbol: Boolean)
 
   def execute =
@@ -49,7 +49,7 @@ object Part1 extends Challenge[Int](day(3)):
       val bottomRight: Option[Cell] = if x >= (width - 1) || y >= (height - 1) then None else Some(metrix(x + 1)(y + 1))
 
       val isAdjacent = Seq(topLeft, topCenter, topRight, left, right, bottomLeft, bottomCenter, bottomRight).flatten
-        .exists(x => x.isSpecial || x.isStar)
+        .exists(_.isSpecial)
       if isAdjacent then DigitScan(int, true)
       else DigitScan(int, false)
     }

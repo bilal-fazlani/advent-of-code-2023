@@ -13,8 +13,11 @@ object Day3Tests extends ZIOSpecDefault {
     test("parse empty cell") {
       assertTrue(Cell.parse('.') == Cell.Empty)
     },
+    test("parse gear symbol") {
+      assertTrue(Cell.parse('*') == Cell.StarSymbol)
+    },
     test("parse special char cell") {
-      assertTrue(Cell.parse('*') == Cell.SpecialChar)
+      assertTrue(Cell.parse('$') == Cell.SpecialChar)
     },
     test("read line") {
       assertTrue(
@@ -22,14 +25,17 @@ object Day3Tests extends ZIOSpecDefault {
           Cell.Digit('1'),
           Cell.Empty,
           Cell.Empty,
-          Cell.SpecialChar,
+          Cell.StarSymbol,
           Cell.SpecialChar
         )
       )
     }
   ) + suite("Day 3 Tests")(
-    test("sum of part numbers"){
+    test("sum of part numbers") {
       Part1.execute.map(value => assertTrue(value == 4361))
+    },
+    test("sum of gear ratios") {
+      Part2.execute.map(value => assertCompletes)
     }
   )
 }
