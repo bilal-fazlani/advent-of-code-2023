@@ -51,6 +51,9 @@ object Day4Tests extends ZIOSpecDefault {
     },
     test("part 1 : winning number points") {
       assertTrue(Part1.execute == 13)
+    },
+    test("part 2 : pile of scratch cards") {
+      assertTrue(Part2.execute == 30)
     }
   )
 }
