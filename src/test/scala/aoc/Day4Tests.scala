@@ -50,8 +50,8 @@ object Day4Tests extends ZIOSpecDefault {
       val output = Part1.calculatePoints(Card(1, set1, set2))
       assertTrue(output == 8)
     },
-    // test("part 1 : winning number points") {
-    //   Part1.execute.map(value => assertTrue(value == 13))
-    // }
+    test("part 1 : winning number points") {
+      Part1.execute.map(value => assertTrue(value == 13))
+    }
   )
 }
