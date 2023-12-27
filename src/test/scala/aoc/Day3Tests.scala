@@ -1,8 +1,6 @@
 package aoc.day3
 
-import zio.*
 import zio.test.*
-import zio.stream.*
 import zio.test.Assertion.*
 
 object Day3Tests extends ZIOSpecDefault {
@@ -21,7 +19,7 @@ object Day3Tests extends ZIOSpecDefault {
     },
     test("read line") {
       assertTrue(
-        Part1.readLine("1..*a") == Chunk(
+        Part1.readLine("1..*a") == List(
           Cell.Digit('1'),
           Cell.Empty,
           Cell.Empty,
@@ -32,10 +30,10 @@ object Day3Tests extends ZIOSpecDefault {
     }
   ) + suite("Day 3 Tests")(
     test("sum of part numbers") {
-      Part1.execute.map(value => assertTrue(value == 4361))
+      assertTrue(Part1.execute == 4361)
     },
     test("sum of gear ratios") {
-      Part2.execute.map(value => assertTrue(value == 467835))
+      assertTrue(Part2.execute == 467835)
     }
   )
 }

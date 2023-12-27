@@ -1,6 +1,5 @@
 package aoc.day4
 
-import zio.*
 import zio.test.*
 import zio.test.Assertion.*
 
@@ -51,7 +50,7 @@ object Day4Tests extends ZIOSpecDefault {
       assertTrue(output == 8)
     },
     test("part 1 : winning number points") {
-      Part1.execute.map(value => assertTrue(value == 13))
+      assertTrue(Part1.execute == 13)
     }
   )
 }

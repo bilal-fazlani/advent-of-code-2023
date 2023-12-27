@@ -5,6 +5,9 @@ import zio.ZIO
 import zio.stream.ZPipeline
 import zio.ZIOAppDefault
 import java.io.IOException
+import scala.io.Source
+
+extension [E, A](e: Either[E, A]) def orDie(f: E => String) = e.fold(e => throw new Exception(f(e)), identity)
 
 private def read(inputFile: InputFile): ZStream[Any, IOException, String] =
   (inputFile match
@@ -23,6 +26,19 @@ private def read(inputFile: InputFile): ZStream[Any, IOException, String] =
     .via(ZPipeline.splitLines)
     .filter(_.nonEmpty)
 
+private def readSync(inputFile: InputFile): Iterator[String] =
+  def iteratorOf(name: String) = Source.fromResource(name).getLines()
+
+  inputFile match
+    case InputFile.Day(day) =>
+      iteratorOf(s"day${day}.txt")
+    case InputFile.Part(InputFile.Day(day), part) =>
+      val path = s"day${day}/part${part}.txt"
+      val resource = this.getClass.getClassLoader.getResource(path.replace('\\', '/'))
+      if resource != null
+      then iteratorOf(path)
+      else iteratorOf(s"day${day}.txt")
+
 private def resourceFileExists(path: String) =
   ZIO
     .attemptBlockingIO(
@@ -33,14 +49,21 @@ private def resourceFileExists(path: String) =
       else ZIO.succeed(true)
     }
 
-trait Challenge[+A](val input: InputFile) extends ZIOAppDefault:
-  val file = read(input)
-  def execute: ZIO[Any, Throwable, A]
+trait Challenge(val file: InputFile) extends ZIOAppDefault:
+  val input = read(file)
+  def execute: ZIO[Any, Throwable, Int]
   def run =
     execute
       .flatMap(value => zio.Console.printLine(value.toString))
       .tapError(error => zio.Console.printLineError(error.getMessage))
       .exitCode
+
+trait ChallengeSync(val file: InputFile):
+  def execute: Int
+  val input: List[String] = readSync(file).toList
+  def main(args: Array[String]) =
+    val output = execute
+    println(output)
 
 enum InputFile:
   case Day(value: Int)
@@ -48,5 +71,4 @@ enum InputFile:
 
 def day(number: Int): InputFile.Day = InputFile.Day(number)
 
-extension (day: InputFile.Day)
-  def part(number: Int): InputFile.Part = InputFile.Part(day, number)
+extension (day: InputFile.Day) def part(number: Int): InputFile.Part = InputFile.Part(day, number)

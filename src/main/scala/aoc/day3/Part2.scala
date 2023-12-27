@@ -1,9 +1,7 @@
 package aoc
 package day3
 
-import zio.*
-
-object Part2 extends Challenge[Int](day(3)):
+object Part2 extends ChallengeSync(day(3)):
   case class Position(x: Int, y: Int) {
     override def toString(): String = s"($x, $y)"
   }
@@ -15,19 +13,16 @@ object Part2 extends Challenge[Int](day(3)):
   private def intersects(range: HorizontalRange, position: Position): Boolean =
     range.y == position.y && position.x >= range.x1 && position.x <= range.x2
 
-  def execute =
-    for {
-      allLines <- file.runCollect
-      metrix = allLines.map(readLine)
-      given Chunk[Chunk[Cell]] = metrix
-      scannedStars = scanStars
-      scannedNumbers = scanNumbers
-      gearRatiosSum = scanGearRatios(scannedStars, scannedNumbers).collect { case (_, set) =>
-        set.foldLeft[Int](1)(_ * _.value)
-      }.sum
-    } yield gearRatiosSum
+  def execute: Int =
+    val metrix = input.map(readLine)
+    given List[List[Cell]] = metrix
+    val scannedStars = scanStars
+    val scannedNumbers = scanNumbers
+    scanGearRatios(scannedStars, scannedNumbers).collect { case (_, set) =>
+      set.foldLeft[Int](1)(_ * _.value)
+    }.sum
 
-  def readLine(line: String) = Chunk.from(line.map(Cell.parse))
+  def readLine(line: String) = line.map(Cell.parse).toList
 
   case class Star(position: Position) {
     override def toString(): String = s"* $position"
@@ -37,7 +32,7 @@ object Part2 extends Challenge[Int](day(3)):
     override def toString(): String = s"$cell $position"
   }
 
-  def scanGearRatios(stars: Chunk[Star], numbers: Chunk[Number])(using metrix: Chunk[Chunk[Cell]]) =
+  def scanGearRatios(stars: List[Star], numbers: List[Number])(using metrix: List[List[Cell]]) =
     stars
       .map { star =>
         val neighbours = star.position.neighbours
@@ -48,17 +43,17 @@ object Part2 extends Challenge[Int](day(3)):
       .filter(_._2.size > 1)
       .toMap
 
-  def scanStars(using metrix: Chunk[Chunk[Cell]]) =
+  def scanStars(using metrix: List[List[Cell]]) =
     metrix.zipWithIndex.flatMap { case (row, y) =>
       row.zipWithIndex.collect { case (Cell.StarSymbol, x) =>
         Star(Position(x, y))
       }
     }
 
-  def scanNumbers(using metrix: Chunk[Chunk[Cell]]) =
+  def scanNumbers(using metrix: List[List[Cell]]) =
     val widht = metrix.head.length
-    var currentGroup: Chunk[PositionedCell] = Chunk.empty
-    var done: Chunk[Number] = Chunk.empty
+    var currentGroup: List[PositionedCell] = List.empty
+    var done: List[Number] = List.empty
 
     def reset(y: Int) =
       // if some number was in progress
@@ -71,7 +66,7 @@ object Part2 extends Challenge[Int](day(3)):
           )
         )
         // reset current number
-        currentGroup = Chunk.empty
+        currentGroup = List.empty
 
     metrix.zipWithIndex.foreach((row, y) =>
       row.zipWithIndex.foreach {
@@ -85,14 +80,13 @@ object Part2 extends Challenge[Int](day(3)):
     done
 
   extension (position: Position) {
-    def neighbours(using metrix: Chunk[Chunk[Cell]]) =
-      Chunk
-        .from(for {
-          x <- (position.x - 1) to (position.x + 1)
-          y <- (position.y - 1) to (position.y + 1)
-          if !(x == position.x && y == position.y)
-          if x >= 0 && y >= 0 && x < metrix.head.length && y < metrix.length
-        } yield (x, y))
+    def neighbours(using metrix: List[List[Cell]]) =
+      (for {
+        x <- (position.x - 1) to (position.x + 1)
+        y <- (position.y - 1) to (position.y + 1)
+        if !(x == position.x && y == position.y)
+        if x >= 0 && y >= 0 && x < metrix.head.length && y < metrix.length
+      } yield (x, y))
         .map { case (x, y) =>
           PositionedCell(metrix(x)(y), Position(x, y))
         }

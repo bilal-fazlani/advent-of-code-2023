@@ -1,17 +1,12 @@
 package aoc
 package day4
 
-import zio.*
-
-object Part1 extends Challenge[Int](day(4)):
-  import Syntax.*
-  def execute =
-    file
-      .map(card.parseString)
-      .absolve
-      .mapError(e => Exception(e.toString))
+object Part1 extends ChallengeSync(day(4)):
+  def execute: Int = 
+    input
+      .map(Syntax.card.parseString(_).orDie(_.toString))
       .map(calculatePoints)
-      .runSum
+      .sum
 
   def calculatePoints(card: Card): Int =
     val n = card.winningNumbers.intersect(card.ownNumbers).size

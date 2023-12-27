@@ -1,8 +1,6 @@
 package aoc.day2
 
-import zio.*
 import zio.test.*
-import zio.stream.*
 import zio.test.Assertion.*
 
 object Day2Tests extends ZIOSpecDefault {
@@ -52,10 +50,10 @@ object Day2Tests extends ZIOSpecDefault {
     }
   ) + suite("Day 2 Tests")(
     test("part 1 : possible games") {
-      Part1.execute.map(value => assertTrue(value == 8))
+      assertTrue(Part1.execute == 8)
     },
     test("part 2 : lowest number of cubes") {
-      Part2.execute.map(value => assertTrue(value == 2286))
+      assertTrue(Part2.execute == 2286)
     }
   )
 }
