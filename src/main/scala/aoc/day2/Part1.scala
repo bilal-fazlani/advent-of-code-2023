@@ -7,12 +7,9 @@ object Part1 extends Challenge(day(2).part(1)):
   val maxGreen = 13
   val maxBlue = 14
 
-  def parseLine(line: String) =
-    Game.parse(line).orDie(_.toString)
-
   def execute: Int =
     input
-      .map(parseLine)
+      .map(Game.parse)
       .filter(game =>
         game.reveals.forall(r =>
           r.counts.forall {

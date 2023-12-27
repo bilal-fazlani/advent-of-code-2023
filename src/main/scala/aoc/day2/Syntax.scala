@@ -11,8 +11,7 @@ case class Reveal(counts: Set[CubeCount])
 case class Game(id: Int, reveals: Seq[Reveal])
 object Game:
   def parse(line: String) =
-    import GameSyntax.*
-    game.parseString(line)
+    GameSyntax.game.parseString(line).orDie(_.toString)
 
 object GameSyntax {
   lazy val comma = char(',')

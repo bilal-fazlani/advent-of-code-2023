@@ -2,10 +2,6 @@ package aoc
 package day2
 
 object Part2 extends Challenge(day(2).part(2)):
-
-  def parseLine(line: String): Game =
-    Game.parse(line).orDie(_.toString)
-
   def execute: Int =
     def colorMax(game: Game, color: Color) = game.reveals
       .flatMap(_.counts.collect { case CubeCount(count, `color`) =>
@@ -14,7 +10,7 @@ object Part2 extends Challenge(day(2).part(2)):
       .max
 
     input
-      .map(parseLine)
+      .map(Game.parse)
       .map { game =>
         val redMax = colorMax(game, Color.Red)
         val blueMax = colorMax(game, Color.Blue)
