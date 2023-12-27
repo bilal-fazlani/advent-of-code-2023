@@ -10,10 +10,16 @@ case class Card(
     winningNumbers: Set[Int],
     ownNumbers: Set[Int]
 ):
+  def matchCount = winningNumbers.intersect(ownNumbers).size
+
   override def toString(): String =
     s"Card $id: \n" +
       s"  ${winningNumbers.mkString(", ")}\n" +
       s"  ${ownNumbers.mkString(", ")}"
+
+object Card:
+  def parse(input: String): Card =
+    Syntax.card.parseString(input).orDie(_.toString)      
 
 object Syntax:
   val number = digit.repeat.map(_.mkString.toInt)
