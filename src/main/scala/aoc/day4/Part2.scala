@@ -7,11 +7,9 @@ object Part2 extends Challenge(day(4)):
   def execute =
     val cards = input.map(Card.parse)
 
-    var count = 0
 
     @tailrec
-    def processCard(i: Int, pendingIndexes: List[Int]): Unit = {
-      count += 1
+    def processCard(i: Int, pendingIndexes: List[Int], count: Int): Int = {
       val card = cards(i)
       val matchCount = card.matchCount
 
@@ -19,8 +17,8 @@ object Part2 extends Challenge(day(4)):
       val nextIndexes = Range(i + 1, i + nextCount).inclusive.toList
       val totalIndexes = pendingIndexes ++ nextIndexes
       if totalIndexes.nonEmpty
-      then processCard(totalIndexes.head, totalIndexes.tail)
+      then processCard(totalIndexes.head, totalIndexes.tail, count = count + 1)
+      else count + 1
     }
 
-    for (i <- 0 to cards.length - 1) do processCard(i, Nil)
-    count
+    Range(0, cards.length).map(i => processCard(i, Nil, 0)).sum
