@@ -1,8 +1,8 @@
 package aoc
 package day4
 
-object Part1 extends ChallengeSync(day(4)):
-  def execute: Int = 
+object Part1 extends Challenge(day(4)):
+  def execute: Int =
     input
       .map(Syntax.card.parseString(_).orDie(_.toString))
       .map(calculatePoints)

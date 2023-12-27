@@ -1,7 +1,7 @@
 package aoc
 package day3
 
-object Part1 extends ChallengeSync(day(3)):
+object Part1 extends Challenge(day(3)):
   case class DigitScan(int: Char, isAdjacentToSymbol: Boolean)
 
   def execute: Int =

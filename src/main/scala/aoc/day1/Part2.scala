@@ -1,7 +1,7 @@
 package aoc
 package day1
 
-object Part2 extends ChallengeSync(day(1).part(2)):
+object Part2 extends Challenge(day(1).part(2)):
   val numberMap = Map(
     "one" -> 1,
     "two" -> 2,

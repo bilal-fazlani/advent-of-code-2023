@@ -49,7 +49,7 @@ private def resourceFileExists(path: String) =
       else ZIO.succeed(true)
     }
 
-trait Challenge(val file: InputFile) extends ZIOAppDefault:
+trait ChallengeAsync(val file: InputFile) extends ZIOAppDefault:
   val input = read(file)
   def execute: ZIO[Any, Throwable, Int]
   def run =
@@ -58,7 +58,7 @@ trait Challenge(val file: InputFile) extends ZIOAppDefault:
       .tapError(error => zio.Console.printLineError(error.getMessage))
       .exitCode
 
-trait ChallengeSync(val file: InputFile):
+trait Challenge(val file: InputFile):
   def execute: Int
   val input: List[String] = readSync(file).toList
   def main(args: Array[String]) =

@@ -1,7 +1,7 @@
 package aoc
 package day2
 
-object Part1 extends ChallengeSync(day(2).part(1)):
+object Part1 extends Challenge(day(2).part(1)):
 
   val maxRed = 12
   val maxGreen = 13

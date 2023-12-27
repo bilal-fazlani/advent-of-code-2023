@@ -1,7 +1,7 @@
 package aoc
 package day1
 
-object Part1 extends ChallengeSync(day(1).part(1)):
+object Part1 extends Challenge(day(1).part(1)):
   def execute =
     val reg = raw"[\d]".r
     input.foldLeft(0) { (acc, line) =>

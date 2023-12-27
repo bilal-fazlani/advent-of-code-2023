@@ -1,7 +1,7 @@
 package aoc
 package day2
 
-object Part2 extends ChallengeSync(day(2).part(2)):
+object Part2 extends Challenge(day(2).part(2)):
 
   def parseLine(line: String): Game =
     Game.parse(line).orDie(_.toString)

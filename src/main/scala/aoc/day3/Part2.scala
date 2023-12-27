@@ -1,7 +1,7 @@
 package aoc
 package day3
 
-object Part2 extends ChallengeSync(day(3)):
+object Part2 extends Challenge(day(3)):
   case class Position(x: Int, y: Int) {
     override def toString(): String = s"($x, $y)"
   }
