@@ -27,7 +27,7 @@ private def read(inputFile: InputFile): ZStream[Any, IOException, String] =
     .filter(_.nonEmpty)
 
 private def readSync(inputFile: InputFile): Iterator[String] =
-  def iteratorOf(name: String) = Source.fromResource(name).getLines()
+  def iteratorOf(name: String) = Source.fromResource(name).getLines().filter(_.nonEmpty)
 
   inputFile match
     case InputFile.Day(day) =>

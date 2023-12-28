@@ -2,6 +2,7 @@ package aoc.day5
 
 import zio.test.*
 import zio.test.Assertion.*
+import MapElement.*
 
 object Day5Tests extends ZIOSpecDefault {
   import Syntax.*
@@ -14,6 +15,10 @@ object Day5Tests extends ZIOSpecDefault {
     },
     test("parse map value") {
       assertTrue(MapLine.parse("01 2 783") == MapLine.MapValue(1, 2, 783))
+    }
+  ) + suite("Day 5 Mapping Tests")(
+    test("seed to soil mapping") {
+      assertTrue(Mapping.resolve(Seed, Soil, 79)(Part1.mappings) == 81)
     }
   )
 }
