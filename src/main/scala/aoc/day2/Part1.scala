@@ -7,7 +7,7 @@ object Part1 extends Challenge(day(2).part(1)):
   val maxGreen = 13
   val maxBlue = 14
 
-  def execute: Int =
+  def execute =
     input
       .map(Game.parse)
       .filter(game =>

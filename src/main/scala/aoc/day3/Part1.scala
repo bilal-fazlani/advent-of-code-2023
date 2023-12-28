@@ -4,7 +4,7 @@ package day3
 object Part1 extends Challenge(day(3)):
   case class DigitScan(int: Char, isAdjacentToSymbol: Boolean)
 
-  def execute: Int =
+  def execute =
     val metrix = input.map(readLine)
     val length = metrix.length
     val width = metrix.head.length

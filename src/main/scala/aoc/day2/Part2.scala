@@ -2,7 +2,7 @@ package aoc
 package day2
 
 object Part2 extends Challenge(day(2).part(2)):
-  def execute: Int =
+  def execute =
     def colorMax(game: Game, color: Color) = game.reveals
       .flatMap(_.counts.collect { case CubeCount(count, `color`) =>
         count

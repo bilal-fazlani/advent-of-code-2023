@@ -2,7 +2,7 @@ package aoc
 package day4
 
 object Part1 extends Challenge(day(4)):
-  def execute: Int =
+  def execute =
     input
       .map(Card.parse)
       .map(calculatePoints)

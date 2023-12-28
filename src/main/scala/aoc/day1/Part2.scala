@@ -19,7 +19,7 @@ object Part2 extends Challenge(day(1).part(2)):
       case Some(number) => number
       case None         => input.toInt
 
-  def execute: Int =
+  def execute =
     val part = numberMap.keys.mkString("|")
     val reg = raw"(?<=(\d|$part))".r
     input.foldLeft(0) { (acc, line) =>

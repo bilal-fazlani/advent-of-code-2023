@@ -13,7 +13,7 @@ object Part2 extends Challenge(day(3)):
   private def intersects(range: HorizontalRange, position: Position): Boolean =
     range.y == position.y && position.x >= range.x1 && position.x <= range.x2
 
-  def execute: Int =
+  def execute =
     val metrix = input.map(readLine)
     given List[List[Cell]] = metrix
     val scannedStars = scanStars

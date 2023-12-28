@@ -10,19 +10,19 @@ object MapElement:
   private val mapping = MapElement.values.map(elem => (elem.toString.toLowerCase, elem)).toMap
   def parse(str: String): MapElement = mapping(str)
 
-case class Seeds(values: List[Int])
+case class Seeds(values: List[Long])
 object Seeds:
   def parse(str: String) = Syntax.seeds.parseString(str).orDie(_.toString)
 
 sealed trait MapLine
 object MapLine:
   case class MapTitle(from: MapElement, to: MapElement) extends MapLine
-  case class MapValue(sourceStart: Int, destinationStart: Int, length: Int) extends MapLine
+  case class MapValue(destinationStart: Long, sourceStart: Long, length: Long) extends MapLine
 
   def parse(str: String): MapLine = (Syntax.mapTitle | Syntax.mapping).parseString(str).orDie(_.toString)
 
 object Syntax:
-  val number = digit.repeat.map(_.mkString.toInt)
+  val number = digit.repeat.map(_.mkString.toLong)
 
   val seeds = string("seeds: ", ()) ~ number.repeatWithSep(whitespace.unit).map(_.toList).map(Seeds.apply)
   val mapTitle = {

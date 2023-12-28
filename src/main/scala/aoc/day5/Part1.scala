@@ -3,9 +3,10 @@ package day5
 
 import MapLine.MapTitle
 import MapElement.*
+import aoc.day5.Syntax.mapping
 
 object Part1 extends Challenge(day(5)):
-  def execute: Int =
+  def execute: Long =
     val initialSeeds = Seeds.parse(input.head)
     val locations = initialSeeds.values.map(seed => Mapping.resolve(Seed, Location, seed)(mappings))
     locations.min
@@ -13,22 +14,18 @@ object Part1 extends Challenge(day(5)):
   def mappings = {
     val lines = input.tail.map(MapLine.parse)
     val state = lines
-      .foldLeft[State](State.empty) {
-        case (state @ State(mappings, Some(prevTitle), values), newTitle: MapLine.MapTitle) => // TITLE LINE WHEN THERE WAS A TITLE SET
+      .foldRight[State](State.empty) {
+        case (title: MapLine.MapTitle, State(mappings, wip)) => // TITLE LINE
           // move in progress to done
-          val newMapping = Mapping(prevTitle.from, prevTitle.to, values)
-          State(mappings :+ newMapping, Some(newTitle), Seq.empty)
-        case (state @ State(mappings, None, _), newTitle: MapLine.MapTitle) => // TITLE LINE WHEN THERE WAS NO TITLE SET
-          // set current in progress
-          State(mappings, Some(newTitle), Seq.empty)
-        case (state @ State(mappings, _, values), value: MapLine.MapValue) => //VALUE LINE
+          val newMapping = Mapping(title.from, title.to, wip)
+          State(mappings.prepended(newMapping), Seq.empty)
+        case (value: MapLine.MapValue, state @ State(mappings, wip)) => // VALUE LINE
           // add value to in progress
-          state.copy(wip = values :+ value)
+          state.copy(wip = wip :+ value)
       }
-    val newMapping = Mapping(state.currentMap.get.from, state.currentMap.get.to, state.wip)
-    state.mappings :+ newMapping
+    state.mappings
   }
 
-  case class State(mappings: Seq[Mapping], currentMap: Option[MapTitle], wip: Seq[MapLine.MapValue])
+  case class State(mappings: Seq[Mapping], wip: Seq[MapLine.MapValue])
   object State:
-    val empty = State(Seq.empty, None, Seq.empty)
+    val empty = State(Seq.empty, Seq.empty)

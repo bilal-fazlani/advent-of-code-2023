@@ -59,7 +59,7 @@ trait ChallengeAsync(val file: InputFile) extends ZIOAppDefault:
       .exitCode
 
 trait Challenge(val file: InputFile):
-  def execute: Int
+  def execute: Long
   val input: List[String] = readSync(file).toList
   def main(args: Array[String]) =
     val output = execute
