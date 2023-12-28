@@ -29,3 +29,22 @@ object Mapping:
         case (Some(input), mapping) => Some(mapping.get(input))
       }
       .getOrElse(throw Exception(s"could not find path from $from to $to for value $value"))
+  
+  def constructAll(input: List[String]) = {
+      val lines = input.tail.map(MapLine.parse)
+      val state = lines
+        .foldRight[State](State.empty) {
+          case (title: MapLine.MapTitle, State(mappings, wip)) => // TITLE LINE
+            // move in progress to done
+            val newMapping = Mapping(title.from, title.to, wip)
+            State(mappings.prepended(newMapping), Seq.empty)
+          case (value: MapLine.MapValue, state @ State(mappings, wip)) => // VALUE LINE
+            // add value to in progress
+            state.copy(wip = wip :+ value)
+        }
+      state.mappings
+    }
+
+  private case class State(mappings: Seq[Mapping], wip: Seq[MapLine.MapValue])
+  private object State:
+    val empty = State(Seq.empty, Seq.empty)
