@@ -9,6 +9,8 @@ import scala.io.Source
 
 extension [E, A](e: Either[E, A]) def orDie(f: E => String) = e.fold(e => throw new Exception(f(e)), identity)
 
+extension (n: Long) def between(a: Long, b: Long): Boolean = n >= a && n <= b
+
 private def read(inputFile: InputFile): ZStream[Any, IOException, String] =
   (inputFile match
     case InputFile.Day(day) =>
