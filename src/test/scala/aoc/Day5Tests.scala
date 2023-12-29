@@ -5,6 +5,8 @@ import zio.test.Assertion.*
 import MapElement.*
 import scala.collection.MapView.MapValues
 import aoc.day5.MapLine.MapValue
+import aoc.readSync
+import aoc.day
 
 object Day5Tests extends ZIOSpecDefault {
   import Syntax.*
@@ -32,10 +34,14 @@ object Day5Tests extends ZIOSpecDefault {
       assertTrue(mapping.get(79) == 81)
     },
     test("seed to soil mapping") {
-      assertTrue(Mapping.resolve(Seed, Soil, 79)(Part1.mappings) == 81)
+      val lines = readSync(day(5))
+      assertTrue(Mapping.resolve(Seed, Soil, 79)(Mapping.constructAll(lines.toList)) == 81)
     },
-    test("min location") {
+    test("part 1: min location") {
       assertTrue(Part1.execute == 35)
     }
+    // test("part 2: min location") {
+    //   Part2.execute.map(value => assertTrue(value == 46))
+    // }
   )
 }

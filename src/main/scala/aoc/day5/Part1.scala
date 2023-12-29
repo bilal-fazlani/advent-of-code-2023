@@ -9,5 +9,5 @@ object Part1 extends Challenge(day(5)):
   def execute: Long =
     val initialSeeds = Seeds.parse(input.head)
     val mappings = Mapping.constructAll(input.tail)
-    val locations = initialSeeds.values.map(seed => Mapping.resolve(Seed, Location, seed)(mappings))
+    val locations = initialSeeds.map(seed => Mapping.resolve(Seed, Location, seed)(mappings))
     locations.min

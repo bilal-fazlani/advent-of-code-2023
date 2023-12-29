@@ -28,7 +28,7 @@ private def read(inputFile: InputFile): ZStream[Any, IOException, String] =
     .via(ZPipeline.splitLines)
     .filter(_.nonEmpty)
 
-private def readSync(inputFile: InputFile): Iterator[String] =
+def readSync(inputFile: InputFile): Iterator[String] =
   def iteratorOf(name: String) = Source.fromResource(name).getLines().filter(_.nonEmpty)
 
   inputFile match
@@ -53,9 +53,9 @@ private def resourceFileExists(path: String) =
 
 trait ChallengeAsync(val file: InputFile) extends ZIOAppDefault:
   val input = read(file)
-  def execute: ZIO[Any, Throwable, Int]
+  def execute: ZIO[Any, Throwable, Long]
   def run =
-    execute
+    execute.debug
       .flatMap(value => zio.Console.printLine(value.toString))
       .tapError(error => zio.Console.printLineError(error.getMessage))
       .exitCode

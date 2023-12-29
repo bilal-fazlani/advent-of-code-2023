@@ -12,7 +12,7 @@ object MapElement:
 
 case class Seeds(values: List[Long])
 object Seeds:
-  def parse(str: String) = Syntax.seeds.parseString(str).orDie(_.toString)
+  def parse(str: String) = Syntax.seeds.parseString(str).orDie(_.toString).values
 
 sealed trait MapLine
 object MapLine:
