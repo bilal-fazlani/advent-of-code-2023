@@ -10,9 +10,8 @@ object MapElement:
   private val mapping = MapElement.values.map(elem => (elem.toString.toLowerCase, elem)).toMap
   def parse(str: String): MapElement = mapping(str)
 
-case class Seeds(values: List[Long])
 object Seeds:
-  def parse(str: String) = Syntax.seeds.parseString(str).orDie(_.toString).values
+  def parse(str: String) = Syntax.seeds.parseString(str).orDie(_.toString)
 
 sealed trait MapLine
 object MapLine:
@@ -24,7 +23,7 @@ object MapLine:
 object Syntax:
   val number = digit.repeat.map(_.mkString.toLong)
 
-  val seeds = string("seeds: ", ()) ~ number.repeatWithSep(whitespace.unit).map(_.toList).map(Seeds.apply)
+  val seeds = string("seeds: ", ()) ~ number.repeatWithSep(whitespace.unit).map(_.toList)
   val mapTitle = {
     val elements = MapElement.values.map(_.toString.toLowerCase)
     val mapElement = elements.map(str => string(str, MapElement.parse(str))).reduce(_ | _)
